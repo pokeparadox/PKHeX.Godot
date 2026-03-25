@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://k4f5o6qe33j0"]
+
+[ext_resource type="Script" uid="uid://bav4b71ufibjg" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://dcomej53djdty" path="res://save_selector/save_selector.tscn" id="2_0xm2m"]
+
+[node name="Main" type="VBoxContainer" unique_id=283893727]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 2
+script = ExtResource("1_ig7tw")
+
+[node name="Title" type="RichTextLabel" parent="." unique_id=610835680]
+layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 0.09019608, 1)
+theme_override_colors/font_outline_color = Color(0.0021947622, 0.116620176, 0.57030267, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.38039216)
+theme_override_font_sizes/normal_font_size = 28
+text = "PKHeX.Gd"
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="." unique_id=345286134]
+layout_mode = 2
+
+[node name="SavesLabel" type="Label" parent="." unique_id=1214049523]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Saves"
+horizontal_alignment = 1
+
+[node name="ButtonLoadSave" type="Button" parent="." unique_id=1487401382]
+layout_mode = 2
+text = "Load New Save"
+
+[node name="HSeparator2" type="HSeparator" parent="." unique_id=904319332]
+layout_mode = 2
+
+[node name="SaveSelector" parent="." unique_id=300777078 instance=ExtResource("2_0xm2m")]
+layout_mode = 2
+
+[connection signal="pressed" from="ButtonLoadSave" to="." method="_on_button_load_save_pressed"]
+[connection signal="save_file_chosen" from="SaveSelector" to="." method="_on_save_selector_save_file_chosen"]
