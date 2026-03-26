@@ -12,6 +12,7 @@ func _ready():
 	add_child(http_request)
 	base_url = Settings.base_address
 
+# Load save into server
 func load_save_file(path : String) -> bool:
 	print("Selected file: ", path)
 	var byte_array = FileAccess.get_file_as_bytes(path)
@@ -27,6 +28,23 @@ func load_save_file(path : String) -> bool:
 					print("415 Error: ", error)
 	return false
 
+# Load a PKM file into server
+func load_pkm_file(path : String) -> String:
+	print("Selected file: ", path)
+	var byte_array = FileAccess.get_file_as_bytes(path)
+	if not byte_array.is_empty():
+		var address : String = "/".join([base_url,save_file, "pkm", "upload", path.get_file()])
+		if OK == http_request.request_raw(address, BINARY_HEADER, HTTPClient.METHOD_PUT, byte_array):
+			var result = await http_request.request_completed
+			match result[RESPONSE_CODE]:
+				200:
+					return result[BODY].get_string_from_ascii()
+				415:
+					var error = result[BODY].get_string_from_ascii()
+					print("415 Error: ", error)
+	return ""
+
+# get array of saves
 func get_save_listing() -> Array[SaveDisplayModel]:
 	var address : String = "/".join([base_url,save_file, "save", "list"])
 	var r = http_request.request(address)
@@ -38,7 +56,45 @@ func get_save_listing() -> Array[SaveDisplayModel]:
 	
 	return []
 
+# Delete a save by provided file hash
+func delete_save_file(file_hash : String) -> bool:
+	var address : String = "/".join([base_url,save_file, "save", file_hash, "delete"])
+	var r = http_request.request(address)
+	if r == OK:
+		var result = await http_request.request_completed
+		match result[RESPONSE_CODE]:
+			200:
+				return true
+	return false
+
+# Get the number of party PKM
+func party_pkm_count(file_hash : String) -> int:
+	var address : String = "/".join([base_url,save_file, "party", "count"])
+	return await _http_int_response(address)
+
+# Get the number of Boxes available
+func box_count(file_hash : String) -> int:
+	var address : String = "/".join([base_url,save_file, "boxes", "count"])
+	return await _http_int_response(address)
+
+# Get the number of PKM in the server storage
+func server_pkm_count(file_hash : String) -> int:
+	var address : String = "/".join([base_url,save_file, "server", "count"])
+	return await _http_int_response(address)
+
+# Display summary listing of PKM in server storage
+
+
 ## Private Helpers
+func _http_int_response(address : String) -> int:
+	var r = http_request.request(address)
+	if r == OK:
+		var result = await http_request.request_completed
+		match result[RESPONSE_CODE]:
+			200:
+				return int(result[BODY].get_string_from_utf8())
+	return -1
+
 func _convert_to_save_display(json) -> SaveDisplayModel:
 	if not json.is_empty():
 		var model = SaveDisplayModel.new()
