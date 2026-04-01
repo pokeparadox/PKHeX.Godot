@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://k4f5o6qe33j0"]
 
 [ext_resource type="Script" uid="uid://bav4b71ufibjg" path="res://main.gd" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://dcomej53djdty" path="res://save_selector/save_selector.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://dcomej53djdty" path="res://controls/save_selector.tscn" id="2_0xm2m"]
 
 [node name="Main" type="VBoxContainer" unique_id=283893727]
 anchors_preset = 15

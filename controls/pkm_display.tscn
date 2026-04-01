@@ -29,10 +29,12 @@ layout_mode = 2
 text = " X "
 
 [node name="Name" type="Label" parent="HBoxContainer/VBoxContainer/Personal" unique_id=1704676966]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Name"
 
 [node name="Gender" type="Label" parent="HBoxContainer/VBoxContainer/Personal" unique_id=1027963935]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Gender"
 
@@ -41,6 +43,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Shiny" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=984817335]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Shiny"
 
@@ -48,14 +51,17 @@ text = "Shiny"
 layout_mode = 2
 
 [node name="Gen" type="Label" parent="HBoxContainer/Info" unique_id=344286841]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Gen"
 
 [node name="Level" type="Label" parent="HBoxContainer/Info" unique_id=1710499408]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Level"
 
 [node name="EXP" type="Label" parent="HBoxContainer/Info" unique_id=2080377541]
+unique_name_in_owner = true
 layout_mode = 2
 text = "EXP"
 

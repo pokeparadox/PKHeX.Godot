@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://coc0t7q4v4elu"]
+
+[ext_resource type="Script" uid="uid://sjjvp288g1wt" path="res://controls/pkm_view.gd" id="1_dg6su"]
+
+[node name="PKM View" type="VBoxContainer" unique_id=371345343]
+script = ExtResource("1_dg6su")
+
+[node name="BoxName" type="Label" parent="." unique_id=1514759333]
+layout_mode = 2
+
+[node name="PKMListing" type="FlowContainer" parent="." unique_id=1578169916]
+layout_mode = 2

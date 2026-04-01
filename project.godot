@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Settings="*uid://xjqxlkwhsgcw"
 PkHexRest="*uid://cl4e0mfhfjt80"
+SceneManager="*uid://c1e42dw0t4628"
 
 [editor_plugins]
 

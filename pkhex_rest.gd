@@ -69,21 +69,34 @@ func delete_save_file(file_hash : String) -> bool:
 
 # Get the number of party PKM
 func party_pkm_count(file_hash : String) -> int:
-	var address : String = "/".join([base_url,save_file, "party", "count"])
+	var address : String = "/".join([base_url,save_file, "party", "count", file_hash])
 	return await _http_int_response(address)
 
 # Get the number of Boxes available
 func box_count(file_hash : String) -> int:
-	var address : String = "/".join([base_url,save_file, "boxes", "count"])
+	var address : String = "/".join([base_url,save_file, "boxes", "count", file_hash])
 	return await _http_int_response(address)
 
 # Get the number of PKM in the server storage
 func server_pkm_count(file_hash : String) -> int:
-	var address : String = "/".join([base_url,save_file, "server", "count"])
+	var address : String = "/".join([base_url,save_file, "server", "count", file_hash])
 	return await _http_int_response(address)
 
-# Display summary listing of PKM in server storage
+# Display summary listing of PKM in party
+func get_pkm_party_display_listing(file_hash : String) -> Array[PkmDisplayModel]:
+	var address : String = "/".join([base_url,save_file, "party", "display", file_hash])
+	var r = http_request.request(address)
+	if r == OK:
+		var result = await http_request.request_completed
+		match result[RESPONSE_CODE]:
+			200:
+				return _convert_to_pkm_display_array(result[BODY].get_string_from_utf8())
+	
+	return []
 
+# Display summary listing of PKM in box
+
+# Display summary listing of PKM in server
 
 ## Private Helpers
 func _http_int_response(address : String) -> int:
@@ -98,8 +111,8 @@ func _http_int_response(address : String) -> int:
 func _convert_to_save_display(json) -> SaveDisplayModel:
 	if not json.is_empty():
 		var model = SaveDisplayModel.new()
-		model.displayString = json["displayString"]
-		model.fileHash = json["fileHash"]
+		model.display_string = json["displayString"]
+		model.file_hash = json["fileHash"]
 		return model
 	return null
 
@@ -109,6 +122,28 @@ func _convert_to_save_display_array(json_string : String) -> Array[SaveDisplayMo
 	if json_data != null:
 		for json in json_data:
 			var m := _convert_to_save_display(json)
+			if m != null:
+				output.append(m)
+	return output
+	
+func _convert_to_pkm_display(json) -> PkmDisplayModel:
+	if not json.is_empty():
+		var model = PkmDisplayModel.new()
+		model.nick_name = json["nickname"]
+		model.generation = json["generation"]
+		model.current_level = json["currentLevel"]
+		#model.gender = json["gender"]
+		model.exp = json["exp"]
+		model.is_shiny = json["isShiny"]
+		return model
+	return null
+
+func _convert_to_pkm_display_array(json_string : String) -> Array[PkmDisplayModel]:
+	var output : Array[PkmDisplayModel]
+	var json_data = JSON.parse_string(json_string)
+	if json_data != null:
+		for json in json_data:
+			var m := _convert_to_pkm_display(json)
 			if m != null:
 				output.append(m)
 	return output

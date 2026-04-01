@@ -1,10 +1,12 @@
 extends Control
 
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
+func setup(pkm_model : PkmDisplayModel) -> void:
+	%Name.text = pkm_model.nick_name
+	%Gender.text = pkm_model.gender
+	#%Shiny.text = pkm_model.is_shiny
+	#%Gen.text = pkm_model.generation
+	#%Level.text = pkm_model.current_level
+	#%EXP.text = pkm_model.exp
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

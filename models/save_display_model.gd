@@ -1,5 +1,5 @@
 class_name SaveDisplayModel
 extends Node
 
-var displayString : String
-var fileHash : String
+var display_string : String
+var file_hash : String
