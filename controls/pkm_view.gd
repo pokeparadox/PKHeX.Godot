@@ -26,6 +26,7 @@ func load_pkm_listing(save_hash : String, loctn : LOCATION, index : int = 0) -> 
 func load_party_pkm(save_hash : String) -> void:
 	$BoxName.text = "Party"
 	var party: Array[PkmDisplayModel] = await PkHexRest.get_pkm_party_display_listing(save_hash)
+	var dump = await PkHexRest.dump_party_pkm(save_hash)
 	load_pkm(party)
 	
 func load_box_pkm(box_index : int) -> void:

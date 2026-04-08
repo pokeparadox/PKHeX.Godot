@@ -15,7 +15,7 @@ func _ready():
 # Load save into server
 func load_save_file(path : String) -> bool:
 	print("Selected file: ", path)
-	var byte_array = FileAccess.get_file_as_bytes(path)
+	var byte_array: PackedByteArray = FileAccess.get_file_as_bytes(path)
 	if not byte_array.is_empty():
 		var address : String = "/".join([base_url,save_file, "save", "upload"])
 		if OK == http_request.request_raw(address, BINARY_HEADER, HTTPClient.METHOD_PUT, byte_array):
@@ -28,10 +28,29 @@ func load_save_file(path : String) -> bool:
 					print("415 Error: ", error)
 	return false
 
+# Dump the PKM into server
+func dump_party_pkm(save_hash : String) -> Array[String]:
+	var address : String = "/".join([base_url, save_file, save_hash, "party", "dump"])
+	var r: int = http_request.request(address, [], HTTPClient.METHOD_POST)
+	if r == OK:
+		var result = await http_request.request_completed
+		if result[RESPONSE_CODE] == 200:
+			var json_string = result[BODY].get_string_from_utf8()
+			var data = JSON.parse_string(json_string)
+			if data is Array:
+				# Convert to Array[String], filtering out non-strings if needed
+				var string_array: Array[String] = []
+				for item in data:
+					if item is String:
+						string_array.append(item)
+				return string_array
+	return []
+
+	
 # Load a PKM file into server
 func load_pkm_file(path : String) -> String:
 	print("Selected file: ", path)
-	var byte_array = FileAccess.get_file_as_bytes(path)
+	var byte_array: PackedByteArray = FileAccess.get_file_as_bytes(path)
 	if not byte_array.is_empty():
 		var address : String = "/".join([base_url,save_file, "pkm", "upload", path.get_file()])
 		if OK == http_request.request_raw(address, BINARY_HEADER, HTTPClient.METHOD_PUT, byte_array):
@@ -47,7 +66,7 @@ func load_pkm_file(path : String) -> String:
 # get array of saves
 func get_save_listing() -> Array[SaveDisplayModel]:
 	var address : String = "/".join([base_url,save_file, "save", "list"])
-	var r = http_request.request(address)
+	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
 		match result[RESPONSE_CODE]:
@@ -59,7 +78,7 @@ func get_save_listing() -> Array[SaveDisplayModel]:
 # Delete a save by provided file hash
 func delete_save_file(file_hash : String) -> bool:
 	var address : String = "/".join([base_url,save_file, "save", file_hash, "delete"])
-	var r = http_request.request(address)
+	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
 		match result[RESPONSE_CODE]:
@@ -85,7 +104,7 @@ func server_pkm_count(file_hash : String) -> int:
 # Display summary listing of PKM in party
 func get_pkm_party_display_listing(file_hash : String) -> Array[PkmDisplayModel]:
 	var address : String = "/".join([base_url,save_file, "party", "display", file_hash])
-	var r = http_request.request(address)
+	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
 		match result[RESPONSE_CODE]:
@@ -100,7 +119,7 @@ func get_pkm_party_display_listing(file_hash : String) -> Array[PkmDisplayModel]
 
 ## Private Helpers
 func _http_int_response(address : String) -> int:
-	var r = http_request.request(address)
+	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
 		match result[RESPONSE_CODE]:
@@ -110,7 +129,7 @@ func _http_int_response(address : String) -> int:
 
 func _convert_to_save_display(json) -> SaveDisplayModel:
 	if not json.is_empty():
-		var model = SaveDisplayModel.new()
+		var model: SaveDisplayModel = SaveDisplayModel.new()
 		model.display_string = json["displayString"]
 		model.file_hash = json["fileHash"]
 		return model
@@ -128,7 +147,7 @@ func _convert_to_save_display_array(json_string : String) -> Array[SaveDisplayMo
 	
 func _convert_to_pkm_display(json) -> PkmDisplayModel:
 	if not json.is_empty():
-		var model = PkmDisplayModel.new()
+		var model: PkmDisplayModel = PkmDisplayModel.new()
 		model.nick_name = json["nickname"]
 		model.generation = json["generation"]
 		model.current_level = json["currentLevel"]
