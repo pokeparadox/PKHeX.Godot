@@ -1,9 +1,9 @@
 extends VBoxContainer
 
-const PkmView = preload("res://controls/pkm_view.tscn")
+const PkmView: PackedScene = preload("res://controls/pkm_view.tscn")
 
 func _on_button_load_save_pressed() -> void:
-	var file_dlg = FileDialog.new()
+	var file_dlg: FileDialog = FileDialog.new()
 	file_dlg.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	file_dlg.connect("file_selected", _on_file_selected)
 	add_child(file_dlg)

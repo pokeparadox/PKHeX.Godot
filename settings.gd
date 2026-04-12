@@ -1,7 +1,7 @@
 extends Node
 
-var config = ConfigFile.new()
-const SETTINGS_PATH = "user://settings.cfg"
+var config: ConfigFile = ConfigFile.new()
+const SETTINGS_PATH: String = "user://settings.cfg"
 var base_address : String
 
 func load_settings() -> void:

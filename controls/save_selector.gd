@@ -14,7 +14,7 @@ func create_buttons(saves : Array[SaveDisplayModel]):
 	for child in get_children():
 		child.queue_free()
 	for model in saves:
-		var button = Button.new()
+		var button: Button = Button.new()
 		button.text = model.display_string
 		button.connect("pressed", _on_button_pressed.bind(model.file_hash))
 		add_child(button)

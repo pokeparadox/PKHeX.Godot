@@ -39,6 +39,7 @@ layout_mode = 2
 text = "Gender"
 
 [node name="Sprite" type="TextureButton" parent="HBoxContainer/VBoxContainer" unique_id=2103504743]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 

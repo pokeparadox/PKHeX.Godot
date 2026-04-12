@@ -4,6 +4,7 @@ var http_request : HTTPRequest
 var base_url : String
 
 const save_file : String = "SaveFile"
+const sprite : String = "Sprite"
 const RESPONSE_CODE : int = 1
 const BODY : int = 3
 const BINARY_HEADER : Array[String] = ["Content-Type: application/octet-stream"]
@@ -100,6 +101,23 @@ func box_count(file_hash : String) -> int:
 func server_pkm_count(file_hash : String) -> int:
 	var address : String = "/".join([base_url,save_file, "server", "count", file_hash])
 	return await _http_int_response(address)
+#  [HttpGet("pkm/{pkmHash}/{saveHash}/sprite")]
+func get_pkm_sprite(pkm_hash : String, save_hash : String) -> Texture2D:
+	var address : String = "/".join([base_url, sprite, "pkm", pkm_hash, save_hash, "sprite"])
+	var r: int = http_request.request(address)
+	if r == OK:
+		var result = await http_request.request_completed
+		match result[RESPONSE_CODE]:
+			200:
+				var file = _convert_to_file_model(result[BODY].get_string_from_utf8())
+				if file != null:	
+					var image: Image = Image.new()
+					var err: int = image.load_png_from_buffer(file.file_data)
+					if err == OK:
+						var texture: ImageTexture = ImageTexture.create_from_image(image)
+						return texture
+	return null
+
 
 # Display summary listing of PKM in party
 func get_pkm_party_display_listing(file_hash : String) -> Array[PkmDisplayModel]:
@@ -152,7 +170,7 @@ func _convert_to_pkm_display(json) -> PkmDisplayModel:
 		model.generation = json["generation"]
 		model.current_level = json["currentLevel"]
 		#model.gender = json["gender"]
-		model.exp = json["exp"]
+		model.experience = json["exp"]
 		model.is_shiny = json["isShiny"]
 		return model
 	return null
@@ -165,4 +183,16 @@ func _convert_to_pkm_display_array(json_string : String) -> Array[PkmDisplayMode
 			var m := _convert_to_pkm_display(json)
 			if m != null:
 				output.append(m)
+	return output
+
+func _convert_to_file_model(json_string : String) -> FileModel:
+	var output : FileModel
+	if not json_string.is_empty():
+		var json_data = JSON.parse_string(json_string)
+		if json_data != null:
+			output = FileModel.new()
+			output.file_name = json_data["fileName"]
+			output.file_hash = json_data["fileHash"]
+			output.file_size = int(json_data["fileSize"])
+			output.file_data = Marshalls.base64_to_raw(json_data["fileData"])
 	return output
