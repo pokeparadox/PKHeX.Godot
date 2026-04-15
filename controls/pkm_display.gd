@@ -3,10 +3,10 @@ extends Control
 func setup(pkm_model : PkmDisplayModel, save_hash : String) -> void:
 	%Name.text = pkm_model.nick_name
 	%Gender.text = pkm_model.gender
-	#%Shiny.text = pkm_model.is_shiny
-	#%Gen.text = pkm_model.generation
-	#%Level.text = pkm_model.current_level
-	#%EXP.text = pkm_model.exp
+	%Shiny.text = "Shiny: " + str(pkm_model.is_shiny)
+	%Gen.text = "Gen: " + str(pkm_model.generation)
+	%Level.text = "Lvl: " + str(pkm_model.current_level)
+	%EXP.text = "EXP: " + str(pkm_model.experience)
 	# Load the sprite from the file hash
 	var sprite = await PkHexRest.get_pkm_sprite(pkm_model.file_hash, save_hash)
 	%Sprite.texture_normal = sprite
