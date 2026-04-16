@@ -8,6 +8,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="SaveInfo" type="Label" parent="." unique_id=464863210]
 layout_mode = 2
@@ -15,8 +17,6 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=576489555]
 layout_mode = 2
 
-[node name="PlayerInfo" type="VBoxContainer" parent="HBoxContainer" unique_id=266556876]
-layout_mode = 2
-
 [node name="PKM View 1" parent="HBoxContainer" unique_id=371345343 instance=ExtResource("1_6tqa2")]
 layout_mode = 2
+size_flags_horizontal = 3

@@ -21,6 +21,11 @@ Settings="*uid://xjqxlkwhsgcw"
 PkHexRest="*uid://cl4e0mfhfjt80"
 SceneManager="*uid://c1e42dw0t4628"
 
+[editor]
+
+movie_writer/movie_file="/home/kevin/Desktop/PKHEx"
+movie_writer/fps=30
+
 [editor_plugins]
 
 enabled=PackedStringArray()

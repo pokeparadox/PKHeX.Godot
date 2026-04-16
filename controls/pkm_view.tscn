@@ -2,11 +2,29 @@
 
 [ext_resource type="Script" uid="uid://sjjvp288g1wt" path="res://controls/pkm_view.gd" id="1_dg6su"]
 
-[node name="PKM View" type="VBoxContainer" unique_id=371345343]
+[node name="PKM View" type="PanelContainer" unique_id=1089263449]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_dg6su")
 
-[node name="BoxName" type="Label" parent="." unique_id=1514759333]
+[node name="PanelContainer" type="ColorRect" parent="." unique_id=970263130]
+layout_mode = 2
+color = Color(0.08956707, 1.8722862e-05, 0.4630019, 1)
+
+[node name="View" type="VBoxContainer" parent="." unique_id=997920669]
 layout_mode = 2
 
-[node name="PKMListing" type="FlowContainer" parent="." unique_id=1578169916]
+[node name="BoxName" type="Label" parent="View" unique_id=1514759333]
+unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="PKMListing" type="FlowContainer" parent="View" unique_id=1578169916]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+last_wrap_alignment = 1
+vertical = true
