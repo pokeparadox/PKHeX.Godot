@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+Constants="*uid://gd2nx7wv7cq1"
 Settings="*uid://xjqxlkwhsgcw"
 PkHexRest="*uid://cl4e0mfhfjt80"
 SceneManager="*uid://c1e42dw0t4628"

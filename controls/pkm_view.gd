@@ -2,27 +2,20 @@ extends PanelContainer
 
 const PkmDisplay = preload("res://controls/pkm_display.tscn")
 
-enum LOCATION
-{
-	PARTY,
-	BOX,
-	SERVER
-}
 
-var location : LOCATION = LOCATION.PARTY
+
+var location : Constants.LOCATION = Constants.LOCATION.PARTY
 var location_index : int = 0
 
-
-
-func load_pkm_listing(save_hash : String, loctn : LOCATION, index : int = 0) -> void:
+func load_pkm_listing(save_hash : String, loctn : Constants.LOCATION, index : int = 0) -> void:
 	location = loctn
 	location_index = index
 	match location:
-		LOCATION.PARTY:
+		Constants.LOCATION.PARTY:
 			load_party_pkm(save_hash)
-		LOCATION.BOX:
+		Constants.LOCATION.BOX:
 			load_box_pkm(location_index)
-		LOCATION.SERVER:
+		Constants.LOCATION.SERVER:
 			load_server_pokemon(location_index)
 
 func load_party_pkm(save_hash : String) -> void:
@@ -36,7 +29,8 @@ func load_party_pkm(save_hash : String) -> void:
 	load_pkm(party, save_hash)
 	
 func load_box_pkm(box_index : int) -> void:
-	pass
+	%BoxName.text = "Box #" + str(box_index + 1)
+	# get box pkm
 	
 func load_server_pokemon(page: int, num_pkm: int = 10) -> void:
 	pass

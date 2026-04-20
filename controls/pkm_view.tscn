@@ -10,7 +10,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_dg6su")
 
-[node name="PanelContainer" type="ColorRect" parent="." unique_id=970263130]
+[node name="ColourRect" type="ColorRect" parent="." unique_id=970263130]
 layout_mode = 2
 color = Color(0.08956707, 1.8722862e-05, 0.4630019, 1)
 

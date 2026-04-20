@@ -15,6 +15,6 @@ func _on_file_selected(path: String) -> void:
 
 
 func _on_save_selector_save_file_chosen(save_file_hash: String) -> void:
-	SceneManager.set_scene("res://controls/pkm_view.tscn")
-	var view = SceneManager.current_scene
-	view.load_pkm_listing(save_file_hash, view.LOCATION.PARTY)
+	SceneManager.set_scene("res://forms/save_editor.tscn")
+	var editor = SceneManager.current_scene
+	editor.setup(save_file_hash)
