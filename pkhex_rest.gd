@@ -1,6 +1,8 @@
 extends Node
 
-var http_request : HTTPRequest
+#var http_request : HTTPRequest
+const POOLED_REQUESTS : int = 10
+var request_pool : Array = []
 var base_url : String
 
 const save_file : String = "SaveFile"
@@ -8,10 +10,13 @@ const sprite : String = "Sprite"
 const RESPONSE_CODE : int = 1
 const BODY : int = 3
 const BINARY_HEADER : Array[String] = ["Content-Type: application/octet-stream"]
+
 func _ready():
-	http_request = HTTPRequest.new()
-	add_child(http_request)
 	base_url = Settings.base_address
+	for i in range(POOLED_REQUESTS):  # Create a pool of HTTPRequest instances
+		var request: HTTPRequest = HTTPRequest.new()
+		add_child(request)
+		request_pool.append(request)
 
 # Load save into server
 func load_save_file(path : String) -> bool:
@@ -19,8 +24,10 @@ func load_save_file(path : String) -> bool:
 	var byte_array: PackedByteArray = FileAccess.get_file_as_bytes(path)
 	if not byte_array.is_empty():
 		var address : String = "/".join([base_url,save_file, "save", "upload"])
+		var http_request: HTTPRequest = _get_http_request()
 		if OK == http_request.request_raw(address, BINARY_HEADER, HTTPClient.METHOD_PUT, byte_array):
 			var result = await http_request.request_completed
+			_return_http_request(http_request)
 			match result[RESPONSE_CODE]:
 				200:
 					return true
@@ -32,9 +39,11 @@ func load_save_file(path : String) -> bool:
 # Dump the PKM into server
 func dump_party_pkm(save_hash : String) -> Array[String]:
 	var address : String = "/".join([base_url, save_file, save_hash, "party", "dump"])
+	var http_request: HTTPRequest = _get_http_request()
 	var r: int = http_request.request(address, [], HTTPClient.METHOD_POST)
 	if r == OK:
 		var result = await http_request.request_completed
+		_return_http_request(http_request)
 		if result[RESPONSE_CODE] == 200:
 			var json_string = result[BODY].get_string_from_utf8()
 			var data = JSON.parse_string(json_string)
@@ -47,15 +56,36 @@ func dump_party_pkm(save_hash : String) -> Array[String]:
 				return string_array
 	return []
 
-	
+# Dump the PKM into server
+func dump_box_pkm(save_hash : String, index : int) -> Array[String]:
+	var address : String = "/".join([base_url, save_file, save_hash, "box", str(index), "dump"])
+	var http_request: HTTPRequest = _get_http_request()
+	var r: int = http_request.request(address, [], HTTPClient.METHOD_POST)
+	if r == OK:
+		var result = await http_request.request_completed
+		_return_http_request(http_request)
+		if result[RESPONSE_CODE] == 200:
+			var json_string = result[BODY].get_string_from_utf8()
+			var data = JSON.parse_string(json_string)
+			if data is Array:
+				# Convert to Array[String], filtering out non-strings if needed
+				var string_array: Array[String] = []
+				for item in data:
+					if item is String:
+						string_array.append(item)
+				return string_array
+	return []
+
 # Load a PKM file into server
 func load_pkm_file(path : String) -> String:
 	print("Selected file: ", path)
 	var byte_array: PackedByteArray = FileAccess.get_file_as_bytes(path)
 	if not byte_array.is_empty():
 		var address : String = "/".join([base_url,save_file, "pkm", "upload", path.get_file()])
+		var http_request: HTTPRequest = _get_http_request()
 		if OK == http_request.request_raw(address, BINARY_HEADER, HTTPClient.METHOD_PUT, byte_array):
 			var result = await http_request.request_completed
+			_return_http_request(http_request)
 			match result[RESPONSE_CODE]:
 				200:
 					return result[BODY].get_string_from_ascii()
@@ -67,9 +97,11 @@ func load_pkm_file(path : String) -> String:
 # get array of saves
 func get_save_listing() -> Array[SaveDisplayModel]:
 	var address : String = "/".join([base_url,save_file, "save", "list"])
+	var http_request: HTTPRequest = _get_http_request()
 	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
+		_return_http_request(http_request)
 		match result[RESPONSE_CODE]:
 			200:
 				return _convert_to_save_display_array(result[BODY].get_string_from_utf8())
@@ -79,9 +111,11 @@ func get_save_listing() -> Array[SaveDisplayModel]:
 # Delete a save by provided file hash
 func delete_save_file(file_hash : String) -> bool:
 	var address : String = "/".join([base_url,save_file, "save", file_hash, "delete"])
+	var http_request: HTTPRequest = _get_http_request()
 	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
+		_return_http_request(http_request)
 		match result[RESPONSE_CODE]:
 			200:
 				return true
@@ -101,15 +135,18 @@ func box_count(file_hash : String) -> int:
 func server_pkm_count(file_hash : String) -> int:
 	var address : String = "/".join([base_url,save_file, "server", "count", file_hash])
 	return await _http_int_response(address)
+	
 #  [HttpGet("pkm/{pkmHash}/{saveHash}/sprite")]
 func get_pkm_sprite(pkm_hash : String, save_hash : String) -> Texture2D:
 	var address : String = "/".join([base_url, sprite, "pkm", pkm_hash, save_hash, "sprite"])
+	var http_request: HTTPRequest = _get_http_request()
 	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
+		_return_http_request(http_request)
 		match result[RESPONSE_CODE]:
 			200:
-				var file = _convert_to_file_model(result[BODY].get_string_from_utf8())
+				var file: FileModel = _convert_to_file_model(result[BODY].get_string_from_utf8())
 				if file != null:	
 					var image: Image = Image.new()
 					var err: int = image.load_png_from_buffer(file.file_data)
@@ -121,25 +158,41 @@ func get_pkm_sprite(pkm_hash : String, save_hash : String) -> Texture2D:
 
 # Display summary listing of PKM in party
 func get_pkm_party_display_listing(file_hash : String) -> Array[PkmDisplayModel]:
-	var address : String = "/".join([base_url,save_file, "party", "display", file_hash])
+	var address : String = "/".join([base_url,save_file, "party", file_hash, "display"])
+	var http_request: HTTPRequest = _get_http_request()
 	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
+		_return_http_request(http_request)
+		match result[RESPONSE_CODE]:
+			200:
+				return _convert_to_pkm_display_array(result[BODY].get_string_from_utf8())
+	
+	return []
+# [HttpGet("box/{fileHash}/{index}/display")]
+# Display summary listing of PKM in box
+func get_pkm_box_display_listing(file_hash : String, box_index : int) -> Array[PkmDisplayModel]:
+	var address : String = "/".join([base_url,save_file, "box", file_hash, str(box_index), "display"])
+	var http_request: HTTPRequest = _get_http_request()
+	var r: int = http_request.request(address)
+	if r == OK:
+		var result = await http_request.request_completed
+		_return_http_request(http_request)
 		match result[RESPONSE_CODE]:
 			200:
 				return _convert_to_pkm_display_array(result[BODY].get_string_from_utf8())
 	
 	return []
 
-# Display summary listing of PKM in box
-
 # Display summary listing of PKM in server
 
 ## Private Helpers
 func _http_int_response(address : String) -> int:
+	var http_request: HTTPRequest = _get_http_request()
 	var r: int = http_request.request(address)
 	if r == OK:
 		var result = await http_request.request_completed
+		_return_http_request(http_request)
 		match result[RESPONSE_CODE]:
 			200:
 				return int(result[BODY].get_string_from_utf8())
@@ -169,7 +222,7 @@ func _convert_to_pkm_display(json) -> PkmDisplayModel:
 		model.nick_name = json["nickname"]
 		model.generation = json["generation"]
 		model.current_level = json["currentLevel"]
-		#model.gender = json["gender"]
+		model.gender = json["gender"]
 		model.experience = json["exp"]
 		model.is_shiny = json["isShiny"]
 		return model
@@ -196,3 +249,14 @@ func _convert_to_file_model(json_string : String) -> FileModel:
 			output.file_size = int(json_data["fileSize"])
 			output.file_data = Marshalls.base64_to_raw(json_data["fileData"])
 	return output
+
+func _get_http_request() -> HTTPRequest:
+	if request_pool.size() > 0:
+		return request_pool.pop_back()
+	else:
+		var new_request: HTTPRequest = HTTPRequest.new()
+		add_child(new_request)
+		return new_request
+		
+func _return_http_request(request: HTTPRequest) -> void:
+	request_pool.append(request)

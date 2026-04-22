@@ -2,7 +2,7 @@ extends Control
 
 func setup(pkm_model : PkmDisplayModel, save_hash : String) -> void:
 	%Name.text = pkm_model.nick_name
-	%Gender.text = pkm_model.gender
+	%Gender.text = str(pkm_model.gender)
 	%Shiny.text = "Shiny: " + str(pkm_model.is_shiny)
 	%Gen.text = "Gen: " + str(pkm_model.generation)
 	%Level.text = "Lvl: " + str(pkm_model.current_level)

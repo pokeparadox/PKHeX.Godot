@@ -12,11 +12,11 @@ func load_pkm_listing(save_hash : String, loctn : Constants.LOCATION, index : in
 	location_index = index
 	match location:
 		Constants.LOCATION.PARTY:
-			load_party_pkm(save_hash)
+			await load_party_pkm(save_hash)
 		Constants.LOCATION.BOX:
-			load_box_pkm(location_index)
+			await load_box_pkm(save_hash, location_index)
 		Constants.LOCATION.SERVER:
-			load_server_pokemon(location_index)
+			await load_server_pokemon(location_index)
 
 func load_party_pkm(save_hash : String) -> void:
 	%BoxName.text = "Party"
@@ -25,12 +25,16 @@ func load_party_pkm(save_hash : String) -> void:
 	if dump.size() == party.size():
 		for i in range(party.size()):
 			party[i].file_hash = dump[i]
-	
 	load_pkm(party, save_hash)
 	
-func load_box_pkm(box_index : int) -> void:
+func load_box_pkm(save_hash : String, box_index : int) -> void:
 	%BoxName.text = "Box #" + str(box_index + 1)
-	# get box pkm
+	var box: Array[PkmDisplayModel] = await PkHexRest.get_pkm_box_display_listing(save_hash, box_index)
+	var dump : Array[String] = await PkHexRest.dump_box_pkm(save_hash, box_index)
+	if dump.size() == box.size():
+		for i in range(box.size()):
+			box[i].file_hash = dump[i]
+	load_pkm(box, save_hash)
 	
 func load_server_pokemon(page: int, num_pkm: int = 10) -> void:
 	pass
