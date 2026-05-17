@@ -1,4 +1,4 @@
-extends PanelContainer
+extends ScrollContainer
 
 const PkmDisplay = preload("res://controls/pkm_display.tscn")
 
@@ -16,7 +16,7 @@ func load_pkm_listing(save_hash : String, loctn : Constants.LOCATION, index : in
 		Constants.LOCATION.BOX:
 			await load_box_pkm(save_hash, location_index)
 		Constants.LOCATION.SERVER:
-			await load_server_pokemon(location_index)
+			load_server_pokemon(location_index)
 
 func load_party_pkm(save_hash : String) -> void:
 	%BoxName.text = "Party"

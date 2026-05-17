@@ -16,12 +16,19 @@ script = ExtResource("1_f5bhe")
 [node name="SaveInfo" type="Label" parent="." unique_id=464863210]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=576489555]
+[node name="SplitContainer" type="HSplitContainer" parent="." unique_id=576489555]
+unique_name_in_owner = true
+clip_contents = true
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 3
 
-[node name="PKM View 1" parent="HBoxContainer" unique_id=371345343 instance=ExtResource("1_6tqa2")]
+[node name="PKM View 1" parent="SplitContainer" unique_id=371345343 instance=ExtResource("1_6tqa2")]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="PKM View 2" parent="HBoxContainer" unique_id=1089263449 instance=ExtResource("1_6tqa2")]
+[node name="PKM View 2" parent="SplitContainer" unique_id=1089263449 instance=ExtResource("1_6tqa2")]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3

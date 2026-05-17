@@ -3,12 +3,11 @@
 [ext_resource type="Script" uid="uid://0utamq6r14jb" path="res://controls/pkm_display.gd" id="1_c1hr5"]
 
 [node name="PkmDisplay" type="PanelContainer" unique_id=2077265934]
-custom_minimum_size = Vector2(180, 120)
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+custom_minimum_size = Vector2(185, 140)
+offset_right = 185.0
+offset_bottom = 140.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
 script = ExtResource("1_c1hr5")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=2109913582]

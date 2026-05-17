@@ -11,11 +11,6 @@ func setup(pkm_model : PkmDisplayModel, save_hash : String) -> void:
 	var sprite = await PkHexRest.get_pkm_sprite(pkm_model.file_hash, save_hash)
 	%Sprite.texture_normal = sprite
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
 func _on_delete_button_pressed() -> void:
 	# Confirm deletion with user
 	
